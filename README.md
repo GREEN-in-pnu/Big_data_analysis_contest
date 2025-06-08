@@ -297,7 +297,6 @@ roslaunch turtlebot_navigation move_base.launch
 
 * 이 때 `base_local_planner`로 `dwa_local_planner`를 설정하면 DWA 방식으로 경로 탐색 수행.
 
----
 
 ## NetworkX 기반 그래프 알고리즘
 
