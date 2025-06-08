@@ -167,3 +167,19 @@ https://jccr.re.kr/xml/20337/20337.pdf
 - 클러스터링 (K-Means, DBSCAN 등)
 - 분류 모델 (Random Forest, SVM, Neural Network 등)
 - 시계열 분석 또는 PCA 등 (필요 시 추가)
+
+---
+
+# 4. 지도 데이터 및 API 사용방법
+
+---
+
+# 5. 경로탐색 알고리즘
+
+## A*
+
+## 다익스트라
+
+## 벨만-포드
+
+## DWA
