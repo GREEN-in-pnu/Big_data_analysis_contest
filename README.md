@@ -177,8 +177,176 @@ https://jccr.re.kr/xml/20337/20337.pdf
 # 5. 경로탐색 알고리즘
 
 ## A*
+### 알고리즘 동작 흐름
+1. 시작 노드 초기화:
+
+g(start) = 0
+
+f(start) = h(start)
+
+2. **우선순위 큐(Open List)**에 시작 노드 삽입
+
+3. 아래를 반복:
+
+- f(n)이 가장 작은 노드를 Open List에서 꺼냄
+
+- 목표 노드에 도달했으면 경로 종료
+
+- 이웃 노드들을 탐색:
+
+  tentative_g = g(current) + cost(current, neighbor)
+
+  이 값이 기존 g(neighbor)보다 작으면 갱신
+
+  f(neighbor) = g(neighbor) + h(neighbor) 재계산
+
+- 이웃 노드가 Open List에 없다면 삽입
+
+### 다익스트라 알고리즘과의 차이점
+휴리스틱 함수(h)를 도입하여 탐색 우선순위를 더 똑똑하게 설정함
+
+다익스트라는 g(n)만 고려 → 현재까지 온 거리만 기반
+
+A*는 f(n) = g(n) + h(n)을 기준으로 탐색
+
+g(n): 지금까지 실제로 이동한 거리 (누적 가중치)
+
+h(n): 목적지까지의 예상 거리 (휴리스틱)
+
+즉, A*는 지금까지 온 거리와 앞으로 남은 거리의 합을 고려해서 가장 총 비용이 적게 들 것 같은 경로를 먼저 탐색한다.
+
+### 휴리스틱 함수 h(n) 설계법
+1. Euclidean Distance (유클리드 거리)
+   
+사용 조건: 좌표 기반 거리, 실세계 거리와 유사
+
+직선거리이므로 실제 경로보다 작을 수 있음 → admissible(과소추정)의 위험이 있음
+
+2. Manhattan Distance (맨해튼 거리)
+   
+사용 조건: **격자형 도로**, 수직/수평 이동만 가능할 때
+
+블록 기반 도시 구조에 적합 (ex. 뉴욕 도로 구조)
+
+3. Chebyshev Distance
+
+사용 조건: 대각선 이동 허용
+
+### 주의할 점
+휴리스틱이 너무 과대추정되면 → 비최적 경로 탐색 가능 (admissibility X)
+
+복잡한 휴리스틱은 오히려 탐색 속도 저하
+
+너무 단순하면 다익스트라와 성능 차이 없음
+
+### 예시 코드
+```python
+from queue import PriorityQueue
+
+def a_star(start, goal, graph, heuristic):
+    open_list = PriorityQueue()
+    open_list.put((0, start))
+    g = {start: 0}
+    came_from = {}
+
+    while not open_list.empty():
+        _, current = open_list.get()
+
+        if current == goal:
+            return reconstruct_path(came_from, current)
+
+        for neighbor, cost in graph[current]:
+            tentative_g = g[current] + cost
+            if neighbor not in g or tentative_g < g[neighbor]:
+                g[neighbor] = tentative_g
+                f = tentative_g + heuristic(neighbor, goal)
+                open_list.put((f, neighbor))
+                came_from[neighbor] = current
+
+### A* 알고리즘의 적합성
+⭐⭐⭐⭐⭐ (5.0)	
+
+목적지까지 빠르게 도달하는 경로를 찾아야 할 때 유리하고, 휴리스틱을 잘 설계하면 성능이 매우 좋음. 친환경 목적지까지 빠르게 탐색 가능.
 
 ## 다익스트라
+가중치가 있는 그래프에서 한 출발점으로부터 다른 모든 노드까지의 최단 거리를 구하는 알고리즘
+
+음수 가중치가 없는 조건에서 가장 짧은 경로를 보장
+
+### 알고리즘 동작 흐름
+1. 시작 노드 거리 0, 나머지 노드는 무한대로 초기화
+
+2. 우선순위 큐(Priority Queue)를 사용해서
+아직 방문하지 않은 노드 중 거리(g)가 가장 짧은 노드를 선택
+
+3.선택된 노드의 모든 인접 노드에 대해 다음 계산:
+  g(neighbor) = min(g(neighbor), g(current) + cost(current -> neighbor))
+
+4. 갱신되었다면 우선순위 큐에 삽입
+
+5. 큐가 빌 때까지 반복
+
+### A* 알고리즘과의 차이점
+A*가 목적지 중심이라면, Dijkstra는 전체 노드 중심 탐색
+
+### 가중치 계산 방식 g(n)
+실제 이동 누적 거리 (g)만 사용
+
+f(n) = g(n)
+
+g(n)이 될 수 있는 요소
+
+- 거리(기본) : 노드 간 직선 거리, 도보 거리
+
+- 소요 시간 : 실제 이동 시간
+
+- 탄소 배출량 : 거리 * 교통수단 탄소 계수
+
+- 비용 : 교통 요금 등
+
+-> 단순 거리 뿐 아니라 친환경 가중치로 변경하면, 친환경 경로 탐색도 가능함
+
+### 특징 및 장점
+최적 경로 보장 (음수 가중치만 없다면 항상 정답!)
+
+다수의 목적지가 있는 경우에도 유리 (예: 모든 관광지 탐색)
+
+단순하고 구현이 명확함
+
+우선순위 큐(Heapq)와 함께 쓰면 시간복잡도는 O((V+E)logV)
+
+### 단점
+모든 노드에 대해 탐색하기 때문에 목적지가 명확한 상황에서는 불필요하게 느릴 수 있음
+
+휴리스틱이 없기 때문에, A*에 비해 목적지 중심 최적화가 어려움
+
+### 예시 코드
+```python
+import heapq
+
+def dijkstra(start, graph):
+    g = {node: float('inf') for node in graph}
+    g[start] = 0
+    pq = [(0, start)]
+    came_from = {}
+
+    while pq:
+        cost, current = heapq.heappop(pq)
+
+        for neighbor, weight in graph[current]:
+            tentative_g = cost + weight
+            if tentative_g < g[neighbor]:
+                g[neighbor] = tentative_g
+                heapq.heappush(pq, (tentative_g, neighbor))
+                came_from[neighbor] = current
+
+    return g, came_from
+
+### 다익스트라 알고리즘 적합성
+
+⭐⭐⭐⭐☆ (4.5)	
+
+모든 노드 간의 탄소 배출량을 거리 가중치로 모델링 가능하고, 정확한 최단경로 계산에 유리함. 휴리스틱이 필요 없어 단순하고 안정적.
 
 ## 벨만-포드 알고리즘(Bellman-Ford Algorithm)
 
