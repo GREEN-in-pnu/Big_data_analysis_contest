@@ -262,6 +262,7 @@ def a_star(start, goal, graph, heuristic):
                 f = tentative_g + heuristic(neighbor, goal)
                 open_list.put((f, neighbor))
                 came_from[neighbor] = current
+```
 
 ### A* 알고리즘의 적합성
 ⭐⭐⭐⭐⭐ (5.0)	
@@ -341,6 +342,7 @@ def dijkstra(start, graph):
                 came_from[neighbor] = current
 
     return g, came_from
+  ```
 
 ### 다익스트라 알고리즘 적합성
 
